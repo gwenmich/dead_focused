@@ -1,0 +1,3 @@
+This will be a spooky pomodoro timer desktop app with pixel art.
+Creating with Python, PySide6 and Aseprite.
+Updates soon...
