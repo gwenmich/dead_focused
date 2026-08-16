@@ -1,7 +1,8 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QLabel
-from PySide6.QtCore import QSize
-from PySide6.QtGui import QMovie
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QStackedLayout
+from PySide6.QtCore import QSize, Qt
+from PySide6.QtGui import QMovie, QFontDatabase, QFont
+from pathlib import Path
 
 
 class MainWindow(QMainWindow):
@@ -10,22 +11,50 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Dead Focused")
         self.setFixedSize(QSize(512, 700))
 
+        # background gif
         self.background = QMovie("background.gif")
-        self.label = QLabel("background")
-        self.setCentralWidget(self.label)
-        self.label.setScaledContents(True)
-        self.label.setFixedSize(QSize(512, 512))
-        self.label.setMovie(self.background)
+        self.bg_label = QLabel()
+        self.bg_label.setScaledContents(True)
+        self.bg_label.setFixedSize(QSize(512, 512))
+        self.bg_label.setMovie(self.background)
         self.background.start()
-        self.label.show()
+
+        # timer text
+        self.timer_label = QLabel("25:00")
+        self.timer_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.timer_label.setStyleSheet(f"""
+            color: #a8ffb0;
+            font-family: "{self.retrieve_font()}";
+            font-size: 28px;
+            font-weight: bold;
+            background: transparent;""")
+
+        # stack background and timer
+        scene = QWidget()
+        scene.setFixedSize(512, 512)
+        stack = QStackedLayout(scene)
+        stack.setStackingMode(QStackedLayout.StackingMode.StackAll)
+        stack.addWidget(self.bg_label)
+        stack.addWidget(self.timer_label)
+        stack.setCurrentWidget(self.timer_label)
 
 
+        self.setCentralWidget(scene)
+
+    # get pixel font
+    def retrieve_font(self):
+        BASE_DIR = Path(__file__).resolve().parent
+
+        font_path = BASE_DIR / "pixel_font.ttf"
+        font_id = QFontDatabase.addApplicationFont(str(font_path))
+        font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+
+        return font_family
 
 
 app = QApplication(sys.argv)
 
 window = MainWindow()
 window.show()
-
 
 app.exec()
