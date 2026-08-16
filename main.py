@@ -4,6 +4,14 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QMovie, QFontDatabase, QFont
 from pathlib import Path
 
+# set absolute paths for folders
+BASE_DIR = Path(__file__).resolve().parent
+ASSETS_DIR = BASE_DIR / "assets"
+FONTS_DIR = ASSETS_DIR / "fonts"
+IMAGES_DIR = ASSETS_DIR / "images"
+SOUNDS_DIR = ASSETS_DIR / "sounds"
+
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -12,7 +20,7 @@ class MainWindow(QMainWindow):
         self.setFixedSize(QSize(512, 700))
 
         # background gif
-        self.background = QMovie("background.gif")
+        self.background = QMovie("assets/images/background.gif")
         self.bg_label = QLabel()
         self.bg_label.setScaledContents(True)
         self.bg_label.setFixedSize(QSize(512, 512))
@@ -38,14 +46,11 @@ class MainWindow(QMainWindow):
         stack.addWidget(self.timer_label)
         stack.setCurrentWidget(self.timer_label)
 
-
         self.setCentralWidget(scene)
 
     # get pixel font
     def retrieve_font(self):
-        BASE_DIR = Path(__file__).resolve().parent
-
-        font_path = BASE_DIR / "pixel_font.ttf"
+        font_path = FONTS_DIR / "pixel_font.ttf"
         font_id = QFontDatabase.addApplicationFont(str(font_path))
         font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
 
