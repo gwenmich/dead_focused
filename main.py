@@ -2,14 +2,8 @@ import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QStackedLayout, QPushButton, QVBoxLayout
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QMovie, QFontDatabase, QIcon
-from pathlib import Path
-
-# set absolute paths for folders
-BASE_DIR = Path(__file__).resolve().parent
-ASSETS_DIR = BASE_DIR / "assets"
-FONTS_DIR = ASSETS_DIR / "fonts"
-IMAGES_DIR = ASSETS_DIR / "images"
-SOUNDS_DIR = ASSETS_DIR / "sounds"
+from paths import BASE_DIR, ASSETS_DIR, FONTS_DIR, IMAGES_DIR, SOUNDS_DIR
+from button import Button
 
 
 
@@ -31,17 +25,16 @@ class MainWindow(QMainWindow):
         self.timer_label = QLabel("25:00")
         self.timer_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.timer_label.setStyleSheet(f"""
-            color: #a8ffb0;
+            color: #e8e7df;
             font-family: "{self.retrieve_font()}";
             font-size: 28px;
             font-weight: bold;
             background: transparent;""")
 
-        # play button
-        self.play_btn = QPushButton()
-        self.play_btn.setIcon(QIcon(str(IMAGES_DIR) + "/play.png"))
-        self.play_btn.setIconSize(QSize(32, 32))
-        self.play_btn.setFixedSize(32, 32)
+        # buttons
+        play_btn = Button("play.png", "play_pressed.png")
+        pause_btn = Button("pause.png", "pause_pressed.png")
+        reset_btn = Button("reset.png", "reset_pressed.png")
 
         # stack background and timer
         scene = QWidget()
@@ -54,11 +47,15 @@ class MainWindow(QMainWindow):
 
         # set vertical box layout
         app_layout = QWidget()
+        app_layout.setStyleSheet("""
+            background-color: #176b87;""")
         app_stack = QVBoxLayout(app_layout)
         app_stack.setContentsMargins(0, 0, 0, 0)
         app_stack.setAlignment(Qt.AlignmentFlag.AlignTop)
         app_stack.addWidget(scene)
-        app_stack.addWidget(self.play_btn)
+        app_stack.addWidget(play_btn)
+        app_stack.addWidget(pause_btn)
+        app_stack.addWidget(reset_btn)
 
         self.setCentralWidget(app_layout)
 
