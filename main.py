@@ -4,7 +4,7 @@ from PySide6.QtCore import QSize, Qt, QTimer
 from PySide6.QtGui import QMovie, QFontDatabase, QColor
 from paths import FONTS_DIR
 from button import Button
-
+from ghost import Ghost
 
 
 class MainWindow(QMainWindow):
@@ -21,12 +21,12 @@ class MainWindow(QMainWindow):
         self.bg_label.setMovie(self.background)
         self.background.start()
 
-        # timer setup and mode
+        # animation_timer setup and mode
         self.timer = QTimer()
         self.seconds_remaining = 1500
         self.mode = "study"
 
-        # timer text
+        # animation_timer text
         self.timer_label = QLabel("25:00")
         self.shadow_effect = QGraphicsDropShadowEffect()
         self.shadow_effect.setColor(QColor(0, 0, 0, 180))
@@ -67,13 +67,18 @@ class MainWindow(QMainWindow):
             background: transparent;
             """)
 
-        # stack background and timer
+        # ghosts
+        ghost = Ghost("ghost1_left.png", 96, 96)
+
+        # stack background and animation_timer
         scene = QWidget()
         scene.setFixedSize(512, 512)
         bg_stack = QStackedLayout(scene)
         bg_stack.setStackingMode(QStackedLayout.StackingMode.StackAll)
         bg_stack.addWidget(self.bg_label)
         bg_stack.addWidget(self.timer_label)
+        ghost.setParent(scene)
+        ghost.show()
         bg_stack.setCurrentWidget(self.timer_label)
 
         # set horizontal box layout for buttons
@@ -117,7 +122,7 @@ class MainWindow(QMainWindow):
         if not self.timer.isActive():
             self.timer.start(1000)
 
-    # timer tick down and update text
+    # animation_timer tick down and update text
     def tick_down(self):
         self.seconds_remaining -= 1
         if self.seconds_remaining == 0:
