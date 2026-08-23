@@ -31,10 +31,24 @@ class MainWindow(QMainWindow):
             font-weight: bold;
             background: transparent;""")
 
-        # buttons
-        play_btn = Button("play.png", "play_pressed.png")
-        pause_btn = Button("pause.png", "pause_pressed.png")
-        reset_btn = Button("reset.png", "reset_pressed.png")
+        # UI buttons
+        play_btn = Button("play.png", "play_pressed.png", 48)
+        pause_btn = Button("pause.png", "pause_pressed.png", 48)
+        reset_btn = Button("reset.png", "reset_pressed.png", 48)
+
+        # music player
+        left_arrow = Button("left_arrow.png", "left_arrow_pressed.png", 32)
+        right_arrow = Button("right_arrow.png", "right_arrow_pressed.png", 32)
+
+        self.music_label = QLabel("music player")
+        self.music_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.music_label.setStyleSheet(f"""
+            color: #e8e7df;
+            font-family: "{self.retrieve_font()}";
+            font-size: 16px;
+            background: transparent;
+            """)
+
 
         # stack background and timer
         scene = QWidget()
@@ -52,6 +66,13 @@ class MainWindow(QMainWindow):
         buttons_layout.addWidget(pause_btn)
         buttons_layout.addWidget(reset_btn)
 
+        # set horizontal box layout for music player
+        music_player = QWidget()
+        music_layout = QHBoxLayout(music_player)
+        music_layout.addWidget(left_arrow)
+        music_layout.addWidget(self.music_label)
+        music_layout.addWidget(right_arrow)
+
         # set vertical box layout as main layout
         app_layout = QWidget()
         app_layout.setStyleSheet("""
@@ -61,6 +82,7 @@ class MainWindow(QMainWindow):
         app_stack.setAlignment(Qt.AlignmentFlag.AlignTop)
         app_stack.addWidget(scene)
         app_stack.addWidget(buttons)
+        app_stack.addWidget(music_player)
 
 
         self.setCentralWidget(app_layout)
