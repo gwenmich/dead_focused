@@ -1,4 +1,4 @@
-import sys
+import sys, random
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QStackedLayout, QVBoxLayout, QHBoxLayout, QGraphicsDropShadowEffect
 from PySide6.QtCore import QSize, Qt, QTimer
 from PySide6.QtGui import QMovie, QFontDatabase, QColor
@@ -43,6 +43,10 @@ class MainWindow(QMainWindow):
             padding-top: 50px;
             """)
 
+        # ghost appearance timer
+        self.ghost_timer = QTimer()
+        self.ghost_timer.timeout.connect(self.spawn_ghost)
+
         # UI buttons
         play_btn = Button("play.png", "play_pressed.png", 48)
         pause_btn = Button("pause.png", "pause_pressed.png", 48)
@@ -50,6 +54,7 @@ class MainWindow(QMainWindow):
 
         # UI buttons operations
         play_btn.pressed.connect(self.start_timer)
+        play_btn.pressed.connect(self.ghost_timer.start)
         self.timer.timeout.connect(self.tick_down)
         pause_btn.pressed.connect(self.pause_timer)
         reset_btn.pressed.connect(self.reset_timer)
@@ -67,18 +72,14 @@ class MainWindow(QMainWindow):
             background: transparent;
             """)
 
-        # ghosts
-        ghost = Ghost("ghost1_left.png", 96, 96)
 
         # stack background and animation_timer
-        scene = QWidget()
-        scene.setFixedSize(512, 512)
-        bg_stack = QStackedLayout(scene)
+        self.scene = QWidget()
+        self.scene.setFixedSize(512, 512)
+        bg_stack = QStackedLayout(self.scene)
         bg_stack.setStackingMode(QStackedLayout.StackingMode.StackAll)
         bg_stack.addWidget(self.bg_label)
         bg_stack.addWidget(self.timer_label)
-        ghost.setParent(scene)
-        ghost.show()
         bg_stack.setCurrentWidget(self.timer_label)
 
         # set horizontal box layout for buttons
@@ -102,7 +103,7 @@ class MainWindow(QMainWindow):
         app_stack = QVBoxLayout(app_layout)
         app_stack.setContentsMargins(0, 0, 0, 0)
         app_stack.setAlignment(Qt.AlignmentFlag.AlignTop)
-        app_stack.addWidget(scene)
+        app_stack.addWidget(self.scene)
         app_stack.addWidget(buttons)
         app_stack.addWidget(music_player)
 
@@ -145,6 +146,26 @@ class MainWindow(QMainWindow):
         self.timer.stop()
         self.seconds_remaining = 1500
         self.timer_label.setText("25:00")
+
+    def get_random_ghost(self):
+        ghosts = [
+            ("ghost1_left.png", "left"),
+            ("ghost1_right.png", "right"),
+            ("ghost2_left.png", "left"),
+            ("ghost2_right.png", "right")
+        ]
+        ghost_file, direction = random.choice(ghosts)
+        return Ghost(ghost_file, 96, 96, direction)
+
+
+    def spawn_ghost(self):
+        if self.timer.isActive():
+            self.ghost_timer.setInterval(random.randrange(10000, 20000))
+            self.ghost = self.get_random_ghost()
+            self.ghost.setParent(self.scene)
+            self.ghost.show()
+
+
 
 
 app = QApplication(sys.argv)

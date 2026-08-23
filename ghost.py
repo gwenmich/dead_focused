@@ -2,19 +2,26 @@ from PySide6.QtCore import QRect, QTimer
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QLabel
 from paths import IMAGES_DIR
+import random
 
 
 class Ghost(QLabel):
 
-    def __init__(self, spritesheet_path, frame_width, frame_height):
+    def __init__(self, spritesheet_path, frame_width, frame_height, direction):
         super().__init__()
         self.spritesheet = QPixmap(str(IMAGES_DIR / spritesheet_path))
         self.frame_width = frame_width
         self.frame_height = frame_height
         self.setFixedSize(self.frame_width, self.frame_height)
         self.current_frame = 0
-        self.x = 512 + frame_width
-        self.y = 300
+
+        self.direction = direction
+        if self.direction == "right":
+            self.x = -frame_width
+        else:
+            self.x = 512 + frame_width
+        self.y = random.randrange(256, 512 - frame_height)
+
         self.setStyleSheet("""
             background: transparent;
             """)
@@ -42,6 +49,22 @@ class Ghost(QLabel):
             self.current_frame = 0
 
     def move_forward(self):
-        self.x -= 5
+        if self.direction == "right":
+            self.x += 5
+        else:
+            self.x -= 5
         self.move(self.x, self.y)
+
+        if self.direction == "right":
+            if self.x > 512 + self.frame_width:
+                self.destroy_ghost()
+        else:
+            if self.x < -self.frame_width:
+                self.destroy_ghost()
+
+
+    def destroy_ghost(self):
+        self.animation_timer.stop()
+        self.moving_timer.stop()
+        self.deleteLater()
 
