@@ -1,8 +1,8 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QStackedLayout, QPushButton, QVBoxLayout
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QStackedLayout, QVBoxLayout, QHBoxLayout
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtGui import QMovie, QFontDatabase, QIcon
-from paths import BASE_DIR, ASSETS_DIR, FONTS_DIR, IMAGES_DIR, SOUNDS_DIR
+from PySide6.QtGui import QMovie, QFontDatabase
+from paths import FONTS_DIR
 from button import Button
 
 
@@ -45,7 +45,14 @@ class MainWindow(QMainWindow):
         bg_stack.addWidget(self.timer_label)
         bg_stack.setCurrentWidget(self.timer_label)
 
-        # set vertical box layout
+        # set horizontal box layout for buttons
+        buttons = QWidget()
+        buttons_layout = QHBoxLayout(buttons)
+        buttons_layout.addWidget(play_btn)
+        buttons_layout.addWidget(pause_btn)
+        buttons_layout.addWidget(reset_btn)
+
+        # set vertical box layout as main layout
         app_layout = QWidget()
         app_layout.setStyleSheet("""
             background-color: #176b87;""")
@@ -53,9 +60,8 @@ class MainWindow(QMainWindow):
         app_stack.setContentsMargins(0, 0, 0, 0)
         app_stack.setAlignment(Qt.AlignmentFlag.AlignTop)
         app_stack.addWidget(scene)
-        app_stack.addWidget(play_btn)
-        app_stack.addWidget(pause_btn)
-        app_stack.addWidget(reset_btn)
+        app_stack.addWidget(buttons)
+
 
         self.setCentralWidget(app_layout)
 
