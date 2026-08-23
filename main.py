@@ -1,6 +1,6 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QStackedLayout, QVBoxLayout, QHBoxLayout, QGraphicsDropShadowEffect
-from PySide6.QtCore import QSize, Qt
+from PySide6.QtCore import QSize, Qt, QTimer
 from PySide6.QtGui import QMovie, QFontDatabase, QColor
 from paths import FONTS_DIR
 from button import Button
@@ -20,6 +20,11 @@ class MainWindow(QMainWindow):
         self.bg_label.setFixedSize(QSize(512, 512))
         self.bg_label.setMovie(self.background)
         self.background.start()
+
+        # timer setup and mode
+        self.timer = QTimer()
+        self.seconds_remaining = 1500
+        self.mode = "study"
 
         # timer text
         self.timer_label = QLabel("25:00")
@@ -43,6 +48,12 @@ class MainWindow(QMainWindow):
         pause_btn = Button("pause.png", "pause_pressed.png", 48)
         reset_btn = Button("reset.png", "reset_pressed.png", 48)
 
+        # UI buttons operations
+        play_btn.pressed.connect(self.start_timer)
+        self.timer.timeout.connect(self.tick_down)
+        pause_btn.pressed.connect(self.pause_timer)
+        reset_btn.pressed.connect(self.reset_timer)
+
         # music player
         left_arrow = Button("left_arrow.png", "left_arrow_pressed.png", 32)
         right_arrow = Button("right_arrow.png", "right_arrow_pressed.png", 32)
@@ -55,7 +66,6 @@ class MainWindow(QMainWindow):
             font-size: 16px;
             background: transparent;
             """)
-
 
         # stack background and timer
         scene = QWidget()
@@ -101,6 +111,35 @@ class MainWindow(QMainWindow):
         font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
 
         return font_family
+
+    # TIMER FUNCTIONS
+    def start_timer(self):
+        if not self.timer.isActive():
+            self.timer.start(1000)
+
+    # timer tick down and update text
+    def tick_down(self):
+        self.seconds_remaining -= 1
+        if self.seconds_remaining == 0:
+            self.timer.stop()
+            if self.mode == "study":
+                self.seconds_remaining = 300
+                self.mode = "break"
+            else:
+                self.seconds_remaining = 1500
+                self.mode = "study"
+
+        minutes, leftover_secs = divmod(self.seconds_remaining, 60)
+        self.timer_label.setText(f"{minutes:02}:{leftover_secs:02}")
+
+    def pause_timer(self):
+        if self.timer.isActive():
+            self.timer.stop()
+
+    def reset_timer(self):
+        self.timer.stop()
+        self.seconds_remaining = 1500
+        self.timer_label.setText("25:00")
 
 
 app = QApplication(sys.argv)
