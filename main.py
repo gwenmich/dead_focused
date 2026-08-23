@@ -1,7 +1,7 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QStackedLayout, QVBoxLayout, QHBoxLayout
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QStackedLayout, QVBoxLayout, QHBoxLayout, QGraphicsDropShadowEffect
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtGui import QMovie, QFontDatabase
+from PySide6.QtGui import QMovie, QFontDatabase, QColor
 from paths import FONTS_DIR
 from button import Button
 
@@ -23,13 +23,20 @@ class MainWindow(QMainWindow):
 
         # timer text
         self.timer_label = QLabel("25:00")
+        self.shadow_effect = QGraphicsDropShadowEffect()
+        self.shadow_effect.setColor(QColor(0, 0, 0, 180))
+        self.shadow_effect.setOffset(2, 2)
+        self.shadow_effect.setBlurRadius(6)
+        self.timer_label.setGraphicsEffect(self.shadow_effect)
         self.timer_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.timer_label.setStyleSheet(f"""
             color: #e8e7df;
             font-family: "{self.retrieve_font()}";
             font-size: 28px;
             font-weight: bold;
-            background: transparent;""")
+            background: transparent;
+            padding-top: 50px;
+            """)
 
         # UI buttons
         play_btn = Button("play.png", "play_pressed.png", 48)
