@@ -48,9 +48,9 @@ class MainWindow(QMainWindow):
         self.ghost_timer.timeout.connect(self.spawn_ghost)
 
         # UI buttons
-        play_btn = Button("play.png", "play_pressed.png", 48)
-        pause_btn = Button("pause.png", "pause_pressed.png", 48)
-        reset_btn = Button("reset.png", "reset_pressed.png", 48)
+        play_btn = Button("play.png", "play_pressed.png", 48, "ui_btn_press.wav", "ui_btn_release.wav")
+        pause_btn = Button("pause.png", "pause_pressed.png", 48, "ui_btn_press.wav", "ui_btn_release.wav")
+        reset_btn = Button("reset.png", "reset_pressed.png", 48, "ui_btn_press.wav", "ui_btn_release.wav")
 
         # UI buttons operations
         play_btn.pressed.connect(self.start_timer)
@@ -60,8 +60,8 @@ class MainWindow(QMainWindow):
         reset_btn.pressed.connect(self.reset_timer)
 
         # music player
-        left_arrow = Button("left_arrow.png", "left_arrow_pressed.png", 32)
-        right_arrow = Button("right_arrow.png", "right_arrow_pressed.png", 32)
+        left_arrow = Button("left_arrow.png", "left_arrow_pressed.png", 32, "arrow_press.wav", "arrow_release.wav")
+        right_arrow = Button("right_arrow.png", "right_arrow_pressed.png", 32, "arrow_press.wav", "arrow_release.wav")
 
         self.music_label = QLabel("music player")
         self.music_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -155,12 +155,12 @@ class MainWindow(QMainWindow):
             ("ghost2_right.png", "right")
         ]
         ghost_file, direction = random.choice(ghosts)
-        return Ghost(ghost_file, 96, 96, direction)
+        return Ghost(ghost_file, 128, 128, direction)
 
 
     def spawn_ghost(self):
         if self.timer.isActive():
-            self.ghost_timer.setInterval(random.randrange(10000, 20000))
+            self.ghost_timer.setInterval(random.randrange(15000, 25000))
             self.ghost = self.get_random_ghost()
             self.ghost.setParent(self.scene)
             self.ghost.show()
