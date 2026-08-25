@@ -1,8 +1,9 @@
 import sys, random
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QStackedLayout, QVBoxLayout, QHBoxLayout, QGraphicsDropShadowEffect
-from PySide6.QtCore import QSize, Qt, QTimer
+from PySide6.QtCore import QSize, Qt, QTimer, QUrl
 from PySide6.QtGui import QMovie, QFontDatabase, QColor
-from paths import FONTS_DIR
+from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
+from paths import FONTS_DIR, SOUNDS_DIR
 from button import Button
 from ghost import Ghost
 
@@ -63,7 +64,7 @@ class MainWindow(QMainWindow):
         left_arrow = Button("left_arrow.png", "left_arrow_pressed.png", 32, "arrow_press.wav", "arrow_release.wav")
         right_arrow = Button("right_arrow.png", "right_arrow_pressed.png", 32, "arrow_press.wav", "arrow_release.wav")
 
-        self.music_label = QLabel("music player")
+        self.music_label = QLabel("soundscape")
         self.music_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.music_label.setStyleSheet(f"""
             color: #e8e7df;
@@ -71,6 +72,13 @@ class MainWindow(QMainWindow):
             font-size: 16px;
             background: transparent;
             """)
+
+        self.audio_output = QAudioOutput()
+        self.music_player = QMediaPlayer()
+        self.music_player.setAudioOutput(self.audio_output)
+        self.music_player.setSource(QUrl.fromLocalFile(str(SOUNDS_DIR / "soundscape.wav")))
+        self.music_player.setLoops(self.music_player.Loops.Infinite)
+
 
 
         # stack background and animation_timer
@@ -122,6 +130,7 @@ class MainWindow(QMainWindow):
     def start_timer(self):
         if not self.timer.isActive():
             self.timer.start(1000)
+            self.music_player.play()
 
     # animation_timer tick down and update text
     def tick_down(self):
@@ -141,11 +150,14 @@ class MainWindow(QMainWindow):
     def pause_timer(self):
         if self.timer.isActive():
             self.timer.stop()
+            if self.music_player.isPlaying():
+                self.music_player.pause()
 
     def reset_timer(self):
         self.timer.stop()
         self.seconds_remaining = 1500
         self.timer_label.setText("25:00")
+        self.music_player.stop()
 
     def get_random_ghost(self):
         ghosts = [
