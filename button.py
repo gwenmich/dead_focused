@@ -23,6 +23,10 @@ class Button(QPushButton):
         self.pressed.connect(self.on_press)
         self.released.connect(self.on_release)
 
+        self.setStyleSheet("""
+            background: transparent;
+            """)
+
     # show pressed image when pressing button
     def on_press(self):
         self.setIcon(QIcon(self.pressed_btn_img_path))

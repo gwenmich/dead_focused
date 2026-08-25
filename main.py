@@ -53,6 +53,9 @@ class MainWindow(QMainWindow):
         pause_btn = Button("pause.png", "pause_pressed.png", 48, "ui_btn_press.wav", "ui_btn_release.wav")
         reset_btn = Button("reset.png", "reset_pressed.png", 48, "ui_btn_press.wav", "ui_btn_release.wav")
 
+        settings_btn = Button("settings.png", "settings_pressed.png", 32, "ui_btn_press.wav", "ui_btn_release.wav")
+        settings_btn.move(469, 10)
+
         # UI buttons operations
         play_btn.pressed.connect(self.start_timer)
         play_btn.pressed.connect(self.ghost_timer.start)
@@ -88,7 +91,10 @@ class MainWindow(QMainWindow):
         bg_stack.setStackingMode(QStackedLayout.StackingMode.StackAll)
         bg_stack.addWidget(self.bg_label)
         bg_stack.addWidget(self.timer_label)
+        settings_btn.setParent(self.scene)
+        settings_btn.show()
         bg_stack.setCurrentWidget(self.timer_label)
+        settings_btn.raise_()
 
         # set horizontal box layout for buttons
         buttons = QWidget()
