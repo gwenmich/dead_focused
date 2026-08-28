@@ -6,6 +6,7 @@ from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 from paths import FONTS_DIR, SOUNDS_DIR
 from button import Button
 from ghost import Ghost
+from settings import Settings
 
 
 class MainWindow(QMainWindow):
@@ -24,11 +25,13 @@ class MainWindow(QMainWindow):
 
         # animation_timer setup and mode
         self.timer = QTimer()
-        self.seconds_remaining = 1500
-        self.mode = "study"
+        self.focus_mins = 25
+        self.break_mins = 5
+        self.seconds_remaining = self.focus_mins * 60
+        self.mode = "focus"
 
         # animation_timer text
-        self.timer_label = QLabel("25:00")
+        self.timer_label = QLabel(f"{self.focus_mins:02}:00")
         self.shadow_effect = QGraphicsDropShadowEffect()
         self.shadow_effect.setColor(QColor(0, 0, 0, 180))
         self.shadow_effect.setOffset(2, 2)
@@ -81,8 +84,11 @@ class MainWindow(QMainWindow):
         self.music_player.setAudioOutput(self.audio_output)
         self.music_player.setSource(QUrl.fromLocalFile(str(SOUNDS_DIR / "soundscape.wav")))
         self.music_player.setLoops(self.music_player.Loops.Infinite)
+        self.audio_output.setVolume(0.5)
 
 
+        # settings
+        settings_btn.pressed.connect(self.open_settings)
 
         # stack background and animation_timer
         self.scene = QWidget()
@@ -143,12 +149,12 @@ class MainWindow(QMainWindow):
         self.seconds_remaining -= 1
         if self.seconds_remaining == 0:
             self.timer.stop()
-            if self.mode == "study":
-                self.seconds_remaining = 300
+            if self.mode == "focus":
+                self.seconds_remaining = self.break_mins * 60
                 self.mode = "break"
             else:
-                self.seconds_remaining = 1500
-                self.mode = "study"
+                self.seconds_remaining = self.focus_mins * 60
+                self.mode = "focus"
 
         minutes, leftover_secs = divmod(self.seconds_remaining, 60)
         self.timer_label.setText(f"{minutes:02}:{leftover_secs:02}")
@@ -161,8 +167,8 @@ class MainWindow(QMainWindow):
 
     def reset_timer(self):
         self.timer.stop()
-        self.seconds_remaining = 1500
-        self.timer_label.setText("25:00")
+        self.seconds_remaining = self.focus_mins * 60
+        self.timer_label.setText(f"{self.focus_mins:02}:00")
         self.music_player.stop()
 
     def get_random_ghost(self):
@@ -182,6 +188,11 @@ class MainWindow(QMainWindow):
             self.ghost = self.get_random_ghost()
             self.ghost.setParent(self.scene)
             self.ghost.show()
+
+    def open_settings(self):
+        self.settings_window = Settings(self.focus_mins, self.break_mins, self.audio_output.volume())
+        self.settings_window.open()
+
 
 
 
