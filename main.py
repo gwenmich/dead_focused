@@ -1,12 +1,12 @@
 import sys, random
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QStackedLayout, QVBoxLayout, QHBoxLayout, QGraphicsDropShadowEffect
-from PySide6.QtCore import QSize, Qt, QTimer, QUrl
+from PySide6.QtCore import QSize, Qt, QTimer
 from PySide6.QtGui import QMovie, QFontDatabase, QColor
-from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
-from paths import FONTS_DIR, SOUNDS_DIR
+from paths import FONTS_DIR
 from button import Button
 from ghost import Ghost
 from settings import Settings
+from music_player import MusicPlayer
 
 
 class MainWindow(QMainWindow):
@@ -66,26 +66,14 @@ class MainWindow(QMainWindow):
         pause_btn.pressed.connect(self.pause_timer)
         reset_btn.pressed.connect(self.reset_timer)
 
-        # music player
+        # music player & arrow buttons
         left_arrow = Button("left_arrow.png", "left_arrow_pressed.png", 32, "arrow_press.wav", "arrow_release.wav")
         right_arrow = Button("right_arrow.png", "right_arrow_pressed.png", 32, "arrow_press.wav", "arrow_release.wav")
 
-        self.music_label = QLabel("soundscape")
-        self.music_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.music_label.setStyleSheet(f"""
-            color: #e8e7df;
-            font-family: "{self.retrieve_font()}";
-            font-size: 16px;
-            background: transparent;
-            """)
+        self.music_player = MusicPlayer(self.retrieve_font())
 
-        self.audio_output = QAudioOutput()
-        self.music_player = QMediaPlayer()
-        self.music_player.setAudioOutput(self.audio_output)
-        self.music_player.setSource(QUrl.fromLocalFile(str(SOUNDS_DIR / "soundscape.wav")))
-        self.music_player.setLoops(self.music_player.Loops.Infinite)
-        self.audio_output.setVolume(0.5)
-
+        left_arrow.pressed.connect(self.music_player.play_previous)
+        right_arrow.pressed.connect(self.music_player.play_next)
 
         # settings
         settings_btn.pressed.connect(self.open_settings)
@@ -110,10 +98,9 @@ class MainWindow(QMainWindow):
         buttons_layout.addWidget(reset_btn)
 
         # set horizontal box layout for music player
-        music_player = QWidget()
-        music_layout = QHBoxLayout(music_player)
+        music_layout = QHBoxLayout(self.music_player)
         music_layout.addWidget(left_arrow)
-        music_layout.addWidget(self.music_label)
+        music_layout.addWidget(self.music_player.music_label)
         music_layout.addWidget(right_arrow)
 
         # set vertical box layout as main layout
@@ -125,7 +112,7 @@ class MainWindow(QMainWindow):
         app_stack.setAlignment(Qt.AlignmentFlag.AlignTop)
         app_stack.addWidget(self.scene)
         app_stack.addWidget(buttons)
-        app_stack.addWidget(music_player)
+        app_stack.addWidget(self.music_player)
 
 
         self.setCentralWidget(app_layout)
@@ -162,8 +149,7 @@ class MainWindow(QMainWindow):
     def pause_timer(self):
         if self.timer.isActive():
             self.timer.stop()
-            if self.music_player.isPlaying():
-                self.music_player.pause()
+            self.music_player.pause()
 
     def reset_timer(self):
         self.timer.stop()
@@ -190,8 +176,9 @@ class MainWindow(QMainWindow):
             self.ghost.show()
 
     def open_settings(self):
-        self.settings_window = Settings(self.focus_mins, self.break_mins, self.audio_output.volume())
+        self.settings_window = Settings(self.focus_mins, self.break_mins, self.music_player.audio_output.volume())
         self.settings_window.open()
+
 
 
 
