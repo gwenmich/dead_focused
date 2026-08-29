@@ -32,11 +32,7 @@ class MainWindow(QMainWindow):
 
         # animation_timer text
         self.timer_label = QLabel(f"{self.focus_mins:02}:00")
-        self.shadow_effect = QGraphicsDropShadowEffect()
-        self.shadow_effect.setColor(QColor(0, 0, 0, 180))
-        self.shadow_effect.setOffset(2, 2)
-        self.shadow_effect.setBlurRadius(6)
-        self.timer_label.setGraphicsEffect(self.shadow_effect)
+        self.apply_shadow(self.timer_label)
         self.timer_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.timer_label.setStyleSheet(f"""
             color: #e8e7df;
@@ -56,8 +52,9 @@ class MainWindow(QMainWindow):
         pause_btn = Button("pause.png", "pause_pressed.png", 48, "ui_btn_press.wav", "ui_btn_release.wav")
         reset_btn = Button("reset.png", "reset_pressed.png", 48, "ui_btn_press.wav", "ui_btn_release.wav")
 
-        settings_btn = Button("settings.png", "settings_pressed.png", 32, "ui_btn_press.wav", "ui_btn_release.wav")
+        settings_btn = Button("settings.png", "settings_pressed.png", 32, "arrow_press.wav", "arrow_release.wav")
         settings_btn.move(469, 10)
+        self.apply_shadow(settings_btn)
 
         # UI buttons operations
         play_btn.pressed.connect(self.start_timer)
@@ -157,6 +154,7 @@ class MainWindow(QMainWindow):
         self.timer_label.setText(f"{self.focus_mins:02}:00")
         self.music_player.stop()
 
+    # ghost appearance functions
     def get_random_ghost(self):
         ghosts = [
             ("ghost1_left.png", "left"),
@@ -175,9 +173,40 @@ class MainWindow(QMainWindow):
             self.ghost.setParent(self.scene)
             self.ghost.show()
 
+    # settings functions
     def open_settings(self):
-        self.settings_window = Settings(self.focus_mins, self.break_mins, self.music_player.audio_output.volume())
+        self.current_volume = self.music_player.audio_output.volume()
+        self.settings_window = Settings(self.focus_mins, self.break_mins, self.current_volume)
         self.settings_window.open()
+        self.settings_window.volume_changed.connect(self.live_volume_change)
+        self.settings_window.finished.connect(self.apply_settings)
+
+    # get values from settings window and apply them
+    def apply_settings(self, result):
+        if result == 1:
+            new_focus_mins = self.settings_window.focus_spinbox.value()
+            new_break_mins = self.settings_window.break_spinbox.value()
+
+            if new_focus_mins == self.focus_mins and new_break_mins == self.break_mins:
+                return
+            else:
+                self.focus_mins = new_focus_mins
+                self.break_mins = new_break_mins
+                self.reset_timer()
+        elif result == 0:
+            self.music_player.audio_output.setVolume(self.current_volume)
+
+    # live change of volume from settings window
+    def live_volume_change(self):
+        self.music_player.audio_output.setVolume(self.settings_window.volume_slider.value() / 100)
+
+    # apply shadow drop effect to widget
+    def apply_shadow(self, widget):
+        shadow_effect = QGraphicsDropShadowEffect(widget)
+        shadow_effect.setColor(QColor(0, 0, 0, 180))
+        shadow_effect.setOffset(2, 2)
+        shadow_effect.setBlurRadius(6)
+        widget.setGraphicsEffect(shadow_effect)
 
 
 
