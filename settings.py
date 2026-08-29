@@ -5,7 +5,7 @@ class Settings(QDialog):
 
     volume_changed = Signal(int)
 
-    def __init__(self, current_focus_mins, current_break_mins, current_volume):
+    def __init__(self, current_focus_mins, current_break_mins, current_volume, font_func):
         super().__init__()
         self.setWindowTitle("Settings")
 
@@ -31,8 +31,9 @@ class Settings(QDialog):
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
 
-        self.setStyleSheet("""
+        self.setStyleSheet(f"""
             background-color: #879b99;
+            font-family: {font_func};
             """)
 
 

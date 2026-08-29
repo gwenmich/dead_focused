@@ -15,9 +15,10 @@ class MusicPlayer(QWidget):
         self.is_playing = False
 
         self.tracks = [
-        "soundscape.wav",
-        "spooky_jazz.wav",
-        "spooky_noise.wav"
+            "soundscape.wav",
+            "spooky_jazz.wav",
+            "spooky_noise.wav",
+            "silence"
         ]
         self.current_index = 0
         self.current_song = self.tracks[self.current_index]
@@ -67,11 +68,15 @@ class MusicPlayer(QWidget):
 
     def set_current_song(self):
         self.current_song = self.tracks[self.current_index]
-        self.player.setSource(QUrl.fromLocalFile(str(SOUNDS_DIR / self.current_song)))
-        self.player.setLoops(self.player.Loops.Infinite)
-        self.update_label()
-        if self.is_playing:
-            self.play()
+        if self.current_song == "silence":
+            self.player.stop()
+            self.music_label.setText("silence")
+        else:
+            self.player.setSource(QUrl.fromLocalFile(str(SOUNDS_DIR / self.current_song)))
+            self.player.setLoops(self.player.Loops.Infinite)
+            self.update_label()
+            if self.is_playing:
+                self.play()
 
 
 

@@ -1,8 +1,9 @@
 import sys, random
+from PySide6.QtMultimedia import QSoundEffect
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QStackedLayout, QVBoxLayout, QHBoxLayout, QGraphicsDropShadowEffect
-from PySide6.QtCore import QSize, Qt, QTimer
+from PySide6.QtCore import QSize, Qt, QTimer, QUrl
 from PySide6.QtGui import QMovie, QFontDatabase, QColor
-from paths import FONTS_DIR
+from paths import FONTS_DIR, SOUNDS_DIR
 from button import Button
 from ghost import Ghost
 from settings import Settings
@@ -42,6 +43,14 @@ class MainWindow(QMainWindow):
             background: transparent;
             padding-top: 50px;
             """)
+
+        # animation end sounds
+        self.focus_end_audio = QSoundEffect()
+        self.focus_end_audio.setSource(QUrl.fromLocalFile(str(SOUNDS_DIR / "rest_in_peace.wav")))
+        self.focus_end_audio.setVolume(0.6)
+        self.break_end_audio = QSoundEffect()
+        self.break_end_audio.setSource(QUrl.fromLocalFile(str(SOUNDS_DIR / "time_is_up.wav")))
+        self.break_end_audio.setVolume(0.6)
 
         # ghost appearance timer
         self.ghost_timer = QTimer()
@@ -134,19 +143,52 @@ class MainWindow(QMainWindow):
         if self.seconds_remaining == 0:
             self.timer.stop()
             if self.mode == "focus":
+                self.duck_audio_volume(self.focus_end_audio)
                 self.seconds_remaining = self.break_mins * 60
                 self.mode = "break"
             else:
+                self.duck_audio_volume(self.break_end_audio)
                 self.seconds_remaining = self.focus_mins * 60
                 self.mode = "focus"
 
         minutes, leftover_secs = divmod(self.seconds_remaining, 60)
         self.timer_label.setText(f"{minutes:02}:{leftover_secs:02}")
 
+    # lower background volume when sound effect at end of timer plays
+    def duck_audio_volume(self, audio):
+        self.original_volume = self.music_player.audio_output.volume()
+        self.fade_to(0.1)
+        audio.playingChanged.connect(lambda: self.restore_music_volume(audio))
+        audio.play()
+
+    def restore_music_volume(self, audio):
+        if not audio.isPlaying():
+            self.fade_to(self.original_volume)
+
+    def fade_to(self, target_volume):
+        self.fade_target = target_volume
+        self.fade_step = 0.02 if target_volume > self.music_player.audio_output.volume() else -0.02
+        self.fade_timer = QTimer()
+        self.fade_timer.timeout.connect(self.fade_step_tick)
+        self.fade_timer.start(30)
+
+    def fade_step_tick(self):
+        current = self.music_player.audio_output.volume()
+        new_volume = current + self.fade_step
+        if self.fade_step > 0 and new_volume >= self.fade_target:
+            self.fade_timer.stop()
+            self.music_player.audio_output.setVolume(self.fade_target)
+        elif self.fade_step < 0 and new_volume <= self.fade_target:
+            self.fade_timer.stop()
+            self.music_player.audio_output.setVolume(self.fade_target)
+        else:
+            self.music_player.audio_output.setVolume(new_volume)
+
+
     def pause_timer(self):
-        if self.timer.isActive():
-            self.timer.stop()
-            self.music_player.pause()
+        # if self.timer.isActive():
+        self.timer.stop()
+        self.music_player.pause()
 
     def reset_timer(self):
         self.timer.stop()
@@ -176,7 +218,7 @@ class MainWindow(QMainWindow):
     # settings functions
     def open_settings(self):
         self.current_volume = self.music_player.audio_output.volume()
-        self.settings_window = Settings(self.focus_mins, self.break_mins, self.current_volume)
+        self.settings_window = Settings(self.focus_mins, self.break_mins, self.current_volume, self.retrieve_font())
         self.settings_window.open()
         self.settings_window.volume_changed.connect(self.live_volume_change)
         self.settings_window.finished.connect(self.apply_settings)
