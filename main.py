@@ -34,8 +34,8 @@ class MainWindow(QMainWindow):
         self.break_end_audio.setVolume(0.6)
 
         # ghost appearance timer
-        ghost_timer = QTimer()
-        ghost_timer.timeout.connect(self.spawn_ghost)
+        self.ghost_timer = QTimer()
+        self.ghost_timer.timeout.connect(self.spawn_ghost)
 
 
         # UI buttons
