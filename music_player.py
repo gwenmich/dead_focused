@@ -1,5 +1,5 @@
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
-from PySide6.QtCore import QUrl, Qt
+from PySide6.QtCore import QUrl, Qt, QTimer
 from PySide6.QtWidgets import QLabel, QWidget
 from paths import SOUNDS_DIR
 
@@ -78,6 +78,35 @@ class MusicPlayer(QWidget):
             if self.is_playing:
                 self.play()
 
+    # lower background volume when sound effect at end of timer plays
+    def duck_audio_volume(self, audio):
+        self.original_volume = self.audio_output.volume()
+        self.fade_to(0.1)
+        audio.playingChanged.connect(lambda: self.restore_music_volume(audio))
+        audio.play()
+
+    def restore_music_volume(self, audio):
+        if not audio.isPlaying():
+            self.fade_to(self.original_volume)
+
+    def fade_to(self, target_volume):
+        self.fade_target = target_volume
+        self.fade_step = 0.02 if target_volume > self.audio_output.volume() else -0.02
+        self.fade_timer = QTimer()
+        self.fade_timer.timeout.connect(self.fade_step_tick)
+        self.fade_timer.start(30)
+
+    def fade_step_tick(self):
+        current = self.audio_output.volume()
+        new_volume = current + self.fade_step
+        if self.fade_step > 0 and new_volume >= self.fade_target:
+            self.fade_timer.stop()
+            self.audio_output.setVolume(self.fade_target)
+        elif self.fade_step < 0 and new_volume <= self.fade_target:
+            self.fade_timer.stop()
+            self.audio_output.setVolume(self.fade_target)
+        else:
+            self.audio_output.setVolume(new_volume)
 
 
 
