@@ -1,6 +1,8 @@
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PySide6.QtCore import QUrl, Qt, QTimer
 from PySide6.QtWidgets import QLabel, QWidget
+
+from ghost import Ghost
 from paths import SOUNDS_DIR
 
 class MusicPlayer(QWidget):
@@ -18,6 +20,7 @@ class MusicPlayer(QWidget):
             "soundscape.wav",
             "spooky_jazz.wav",
             "spooky_noise.wav",
+            "creepy_nightmare.wav",
             "silence"
         ]
         self.current_index = 0
