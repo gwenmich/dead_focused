@@ -3,6 +3,8 @@ from PySide6.QtMultimedia import QSoundEffect
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QStackedLayout, QVBoxLayout, QHBoxLayout, QGraphicsDropShadowEffect
 from PySide6.QtCore import QSize, Qt, QTimer, QUrl
 from PySide6.QtGui import QMovie, QFontDatabase, QColor
+
+from fade_animation import FadeAnimation
 from paths import FONTS_DIR, SOUNDS_DIR
 from button import Button
 from ghost import Ghost
@@ -60,7 +62,9 @@ class MainWindow(QMainWindow):
         # pomodoro timer
         self.timer = PomodoroTimer(self.retrieve_font(), self.apply_shadow)
         self.timer.focus_ended.connect(lambda: self.music_player.duck_audio_volume(self.focus_end_audio))
+        self.timer.focus_ended.connect(self.play_end_animation)
         self.timer.break_ended.connect(lambda: self.music_player.duck_audio_volume(self.break_end_audio))
+        self.timer.break_ended.connect(self.play_end_animation)
         self.timer.started.connect(self.music_player.play)
         self.timer.paused.connect(self.music_player.pause)
         self.timer.stopped.connect(self.music_player.stop)
@@ -176,6 +180,11 @@ class MainWindow(QMainWindow):
             self.ghost.setParent(self.scene)
             self.ghost.show()
 
+    def play_end_animation(self):
+        self.animation = FadeAnimation()
+        self.animation.setParent(self.scene)
+        self.animation.raise_()
+        self.animation.show()
 
 
 
