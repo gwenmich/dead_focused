@@ -7,7 +7,7 @@ from paths import SOUNDS_DIR
 
 class MusicPlayer(QWidget):
 
-    def __init__(self, font_func):
+    def __init__(self, font_func, shadow_func):
         super().__init__()
 
         self.player = QMediaPlayer()
@@ -28,6 +28,7 @@ class MusicPlayer(QWidget):
 
         self.font = font_func
         self.music_label = QLabel()
+        self.label_shadow = shadow_func
         self.update_label()
 
         self.set_current_song()
@@ -43,6 +44,7 @@ class MusicPlayer(QWidget):
                     font-size: 16px;
                     background: transparent;
                     """)
+        self.label_shadow(self.music_label)
 
     def play(self):
         self.player.play()

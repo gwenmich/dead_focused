@@ -53,7 +53,7 @@ class MainWindow(QMainWindow):
         left_arrow = Button("left_arrow.png", "left_arrow_pressed.png", 32, 32, "arrow_press.wav", "arrow_release.wav")
         right_arrow = Button("right_arrow.png", "right_arrow_pressed.png", 32, 32, "arrow_press.wav", "arrow_release.wav")
 
-        self.music_player = MusicPlayer(self.retrieve_font())
+        self.music_player = MusicPlayer(self.retrieve_font(), self.apply_shadow)
 
         left_arrow.pressed.connect(self.music_player.play_previous)
         right_arrow.pressed.connect(self.music_player.play_next)
