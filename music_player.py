@@ -17,11 +17,11 @@ class MusicPlayer(QWidget):
         self.is_playing = False
 
         self.tracks = [
-            "soundscape.wav",
-            "spooky_jazz.wav",
-            "spooky_noise.wav",
+            "haunted_night.wav",
+            "ghost_jazz_club.wav",
+            "ghosts_in_the_wind.wav",
             "creepy_nightmare.wav",
-            "silence"
+            "deathly_silence"
         ]
         self.current_index = 0
         self.current_song = self.tracks[self.current_index]
