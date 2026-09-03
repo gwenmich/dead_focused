@@ -3,7 +3,6 @@ from PySide6.QtMultimedia import QSoundEffect
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QStackedLayout, QVBoxLayout, QHBoxLayout, QGraphicsDropShadowEffect
 from PySide6.QtCore import QSize, Qt, QTimer, QUrl
 from PySide6.QtGui import QMovie, QFontDatabase, QColor
-
 from fade_animation import FadeAnimation
 from paths import FONTS_DIR, SOUNDS_DIR
 from button import Button
@@ -41,18 +40,18 @@ class MainWindow(QMainWindow):
 
 
         # UI buttons
-        play_btn = Button("play.png", "play_pressed.png", 48, "ui_btn_press.wav", "ui_btn_release.wav")
-        pause_btn = Button("pause.png", "pause_pressed.png", 48, "ui_btn_press.wav", "ui_btn_release.wav")
-        reset_btn = Button("reset.png", "reset_pressed.png", 48, "ui_btn_press.wav", "ui_btn_release.wav")
+        play_btn = Button("play.png", "play_pressed.png", 48, 48, "ui_btn_press.wav", "ui_btn_release.wav")
+        pause_btn = Button("pause.png", "pause_pressed.png", 48, 48, "ui_btn_press.wav", "ui_btn_release.wav")
+        reset_btn = Button("reset.png", "reset_pressed.png", 48, 48, "ui_btn_press.wav", "ui_btn_release.wav")
 
-        settings_btn = Button("settings.png", "settings_pressed.png", 32, "arrow_press.wav", "arrow_release.wav")
+        settings_btn = Button("settings.png", "settings_pressed.png", 32, 32, "arrow_press.wav", "arrow_release.wav")
         settings_btn.move(469, 10)
         self.apply_shadow(settings_btn)
 
 
         # music player & arrow buttons
-        left_arrow = Button("left_arrow.png", "left_arrow_pressed.png", 32, "arrow_press.wav", "arrow_release.wav")
-        right_arrow = Button("right_arrow.png", "right_arrow_pressed.png", 32, "arrow_press.wav", "arrow_release.wav")
+        left_arrow = Button("left_arrow.png", "left_arrow_pressed.png", 32, 32, "arrow_press.wav", "arrow_release.wav")
+        right_arrow = Button("right_arrow.png", "right_arrow_pressed.png", 32, 32, "arrow_press.wav", "arrow_release.wav")
 
         self.music_player = MusicPlayer(self.retrieve_font())
 

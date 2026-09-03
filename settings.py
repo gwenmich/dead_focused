@@ -1,5 +1,6 @@
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QSpinBox, QSlider, QDialogButtonBox
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QSpinBox, QSlider, QWidget, QHBoxLayout
+from button import Button
 
 class Settings(QDialog):
 
@@ -25,11 +26,19 @@ class Settings(QDialog):
         settings_layout.addWidget(self.volume_label)
         settings_layout.addWidget(self.volume_slider)
 
-        self.button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
-        settings_layout.addWidget(self.button_box)
+        self.ok_btn = Button("ok_btn.png", "ok_btn_pressed.png", 128, 64, "set_btn_press.wav", "set_btn_release.wav")
+        self.cancel_btn = Button("cancel_btn.png", "cancel_btn_pressed.png", 128, 64, "set_btn_press.wav", "set_btn_release.wav")
 
-        self.button_box.accepted.connect(self.accept)
-        self.button_box.rejected.connect(self.reject)
+        self.ok_btn.released.connect(self.accept)
+        self.cancel_btn.released.connect(self.reject)
+
+        buttons = QWidget()
+        buttons_layout = QHBoxLayout(buttons)
+        buttons_layout.addWidget(self.cancel_btn)
+        buttons_layout.addWidget(self.ok_btn)
+
+        settings_layout.addWidget(buttons)
+
 
         self.setStyleSheet(f"""
             background-color: #879b99;

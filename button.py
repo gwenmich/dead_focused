@@ -6,13 +6,13 @@ from paths import IMAGES_DIR, SOUNDS_DIR
 
 class Button(QPushButton):
 
-    def __init__(self, btn_image, pressed_btn_img, size, press_sound, release_sound):
+    def __init__(self, btn_image, pressed_btn_img, width, height, press_sound, release_sound):
         super().__init__()
         self.btn_img_path = str(IMAGES_DIR / btn_image)
         self.pressed_btn_img_path = str(IMAGES_DIR / pressed_btn_img)
         self.setIcon(QIcon(self.btn_img_path))
-        self.setIconSize(QSize(size, size))
-        self.setFixedSize(size, size)
+        self.setIconSize(QSize(width, height))
+        self.setFixedSize(width, height)
 
         self.pressed_sound = QSoundEffect()
         self.pressed_sound.setSource(QUrl.fromLocalFile(str(SOUNDS_DIR / press_sound)))
