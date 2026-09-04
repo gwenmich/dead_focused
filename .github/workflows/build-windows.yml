@@ -1,0 +1,41 @@
+name: Build Windows executable
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Download assets from the private release
+        shell: bash
+        run: |
+          curl -L \
+          -H "Authorization: token ${{ secrets.ASSETS_TOKEN }}" \
+          -H "Accept: application/octet-stream" \
+          -o assets.zip \
+          "https://api.github.com/repos/gwenmich/dead_focused_assets/releases/assets/382941203"
+          unzip assets.zip -d .
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build the executable
+        run: pyinstaller --windowed --name "Dead Focused" --add-data "assets;assets" main.py
+
+      - name: Upload the built exe as a workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DeadFocused-windows
+          path: dist/Dead Focused/
