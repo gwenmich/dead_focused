@@ -19,7 +19,7 @@ jobs:
           -H "Accept: application/octet-stream" \
           -o assets.zip \
           "https://api.github.com/repos/gwenmich/dead_focused_assets/releases/assets/544739397"
-          unzip assets.zip -d .
+          unzip -o assets.zip -d .
 
       - name: Set up Python
         uses: actions/setup-python@v5
