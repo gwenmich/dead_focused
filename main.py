@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QStack
 from PySide6.QtCore import QSize, Qt, QTimer, QUrl
 from PySide6.QtGui import QMovie, QFontDatabase, QColor
 from fade_animation import FadeAnimation
-from paths import FONTS_DIR, SOUNDS_DIR
+from paths import FONTS_DIR, SOUNDS_DIR, IMAGES_DIR
 from button import Button
 from ghost import Ghost
 from settings import Settings
@@ -19,7 +19,7 @@ class MainWindow(QMainWindow):
         self.setFixedSize(QSize(512, 700))
 
         # background gif
-        self.background = QMovie("assets/images/background.gif")
+        self.background = QMovie(str(IMAGES_DIR / "background.gif"))
         self.bg_label = QLabel()
         self.bg_label.setScaledContents(True)
         self.bg_label.setFixedSize(QSize(512, 512))
