@@ -18,8 +18,7 @@ jobs:
           -H "Authorization: token ${{ secrets.ASSETS_TOKEN }}" \
           -H "Accept: application/octet-stream" \
           -o assets.zip \
-          "https://api.github.com/repos/gwenmich/dead_focused_assets/releases/assets/382941203"
-          cat assets.zip
+          "https://api.github.com/repos/gwenmich/dead_focused_assets/releases/assets/544739397"
           unzip assets.zip -d .
 
       - name: Set up Python
