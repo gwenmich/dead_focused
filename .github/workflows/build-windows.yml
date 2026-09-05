@@ -32,10 +32,16 @@ jobs:
           pip install pyinstaller
 
       - name: Build the executable
-        run: pyinstaller --windowed --name "Dead Focused" --icon "assets/icon/dead_focused.ico" --add-data "assets;assets" --onefile main.py
+        run: pyinstaller --windowed --name "Dead Focused" --icon "assets/icon/dead_focused.ico" --add-data "assets;assets" main.py
+
+      - name: Install Inno Setup
+        run: choco install innosetup -y
+
+      - name: Compile the installer
+        run: ISCC installer.iss
 
       - name: Upload the built exe as a workflow artifact
         uses: actions/upload-artifact@v4
         with:
           name: DeadFocused-windows
-          path: dist/Dead Focused.exe
+          path: Output/DeadFocusedSetup.exe
