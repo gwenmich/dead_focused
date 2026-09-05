@@ -32,7 +32,7 @@ jobs:
           pip install pyinstaller
 
       - name: Build the executable
-        run: pyinstaller --windowed --name "Dead Focused" --icon "assets/icon/dead_focused.ico" --add-data "assets;assets" main.py
+        run: pyinstaller --windowed --name "Dead Focused" --icon "assets/icon/dead_focused.ico" --add-data "assets;assets" --onefile main.py
 
       - name: Upload the built exe as a workflow artifact
         uses: actions/upload-artifact@v4
