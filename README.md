@@ -42,4 +42,31 @@ app. This led to a little nighttime graveyard scene with ghosts floating
 about while you're trying to focus!
 
 
+---
+### Download
+[Download the latest release for Mac & Windows](https://github.com/gwenmich/dead-focused/releases/latest)
 
+#### Mac 
+Download and unzip `Dead.Focused.zip` and open `Dead Focused.app`. Since it isn't signed with an Apple Developer certificate, security settings won't allow you 
+to open it at this point. There are two ways to move ahead:  
+
+  **A.**
+  1. Open the app and click **"Done** on the "Dead Focused" not opened popup
+  2. Go to **System Settings**
+  3. Go to **Privacy & Security**
+  4. Scroll down to where it says Dead Focused is blocked and click the **"Open Anyway"** button next to it
+  5. Open the app
+  
+  **B.**
+  1. Open your terminal 
+  2. Navigate to the folder you have saved the app
+  3. Run `xattr -cr "Dead Focused.app"`
+  4. Open the app
+
+
+**Windows**  
+Download and unzip `DeadFocused-windows.zip`, run `DeadFocusedSetup.exe`,
+and follow the installer.
+
+
+Happy ghosting! 🪦
