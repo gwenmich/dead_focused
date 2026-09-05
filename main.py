@@ -60,10 +60,10 @@ class MainWindow(QMainWindow):
 
         # pomodoro timer
         self.timer = PomodoroTimer(self.retrieve_font(), self.apply_shadow)
-        self.timer.focus_ended.connect(lambda: self.music_player.duck_audio_volume(self.focus_end_audio))
         self.timer.focus_ended.connect(self.play_end_animation)
-        self.timer.break_ended.connect(lambda: self.music_player.duck_audio_volume(self.break_end_audio))
+        self.timer.focus_ended.connect(lambda: self.music_player.duck_audio_volume(self.focus_end_audio))
         self.timer.break_ended.connect(self.play_end_animation)
+        self.timer.break_ended.connect(lambda: self.music_player.duck_audio_volume(self.break_end_audio))
         self.timer.started.connect(self.music_player.play)
         self.timer.paused.connect(self.music_player.pause)
         self.timer.stopped.connect(self.music_player.stop)
