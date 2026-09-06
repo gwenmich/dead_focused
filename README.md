@@ -44,7 +44,7 @@ about while you're trying to focus!
 
 ---
 ### Download
-[Download the latest release for Mac & Windows](https://github.com/gwenmich/dead-focused/releases/latest)
+[Download the latest release for Mac & Windows](https://github.com/gwenmich/dead_focused/releases/tag/v1.0.0)
 
 #### Mac 
 Download and unzip `Dead.Focused.zip` and open `Dead Focused.app`. Since it isn't signed with an Apple Developer certificate, security settings won't allow you 
